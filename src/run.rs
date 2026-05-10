@@ -191,6 +191,11 @@ impl Runner {
         ";
         fs::write(path!(project.dir / "main.rs"), &main_rs[..])?;
 
+        crate::seed::seed_target_dir(
+            project.target_dir.as_ref(),
+            &path!(project.target_dir / "tests" / "trybuild"),
+        );
+
         cargo::build_dependencies(project)?;
 
         Ok(())

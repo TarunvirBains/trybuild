@@ -226,6 +226,36 @@ compiler issue.
 
 <br>
 
+## Sharing the build cache
+
+By default trybuild compiles each test case under an isolated `target/tests/trybuild`
+directory and injects `--cfg trybuild` into the rustflags, which keeps trybuild's
+compilation fully separated from whatever the surrounding workspace is doing.
+
+If your crate doesn't reference `cfg(trybuild)` anywhere, you can opt into reusing
+the parent workspace's already-compiled dependency artifacts by enabling the
+`inherit-cache` Cargo feature and setting the environment variable
+`TRYBUILD_INHERIT_CACHE`:
+
+```toml
+[dev-dependencies]
+trybuild = { version = "1.0", features = ["inherit-cache"] }
+```
+
+With the feature enabled and the variable set, trybuild seeds its isolated
+target subdir from the parent's `deps`, `.fingerprint`, `incremental`, and
+`build` directories before spawning cargo, using reflinks where the filesystem
+supports them and plain copies elsewhere. The `--cfg trybuild` rustflag is
+omitted so the seeded fingerprints match. The spawned cargo still writes into
+the isolated target dir, so it can run concurrently with a parent
+`cargo build` without contending on cargo's build lock.
+
+Don't set this variable if your crate or any of its dependencies reference
+`cfg(trybuild)` — those branches would otherwise be compiled as if trybuild were
+absent.
+
+<br>
+
 ## Troubleshooting
 
 The Rust compiler's diagnostic output can vary as a function of whether the

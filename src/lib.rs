@@ -282,6 +282,7 @@ mod message;
 mod normalize;
 mod run;
 mod rustflags;
+mod seed;
 
 use std::cell::RefCell;
 use std::panic::RefUnwindSafe;

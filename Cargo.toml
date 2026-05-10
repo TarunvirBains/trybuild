@@ -18,9 +18,15 @@ rust-version = "1.85"
 # in https://github.com/dtolnay/trybuild/issues/41.
 diff = ["dep:dissimilar"]
 
+# Opt-in support for TRYBUILD_INHERIT_CACHE, which seeds trybuild's isolated
+# target subdir from the parent workspace's build artifacts. Pulls in
+# reflink-copy and its platform-specific transitive dependencies.
+inherit-cache = ["dep:reflink-copy"]
+
 [dependencies]
 dissimilar = { version = "1.0", optional = true }
 glob = "0.3"
+reflink-copy = { version = "0.1", optional = true }
 serde = "1.0.194"
 serde_derive = "1.0.194"
 serde_json = "1.0.110"
